@@ -167,3 +167,120 @@ jobs:
       - name: Build
         run: |
           cmake --build --preset release
+
+
+          commit-check:
+
+    name: Commit convention
+
+
+    runs-on: ubuntu-latest
+    container:
+      image: gcc:15
+
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          apt update
+          apt install -y \
+            cmake \
+            python3 \
+            pipx \
+          pipx install commitizen
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+    
+      - name: Check commits
+        run: |
+          if [[ "${{ github.event.before }}" == "0000000000000000000000000000000000000000" ]]; then
+            cz check --rev-range "${{ github.sha }}"
+          else
+            cz check --rev-range "${{ github.event.before }}..${{ github.sha }}"
+          fi
+
+
+
+  clang-format:
+
+    name: clang-format check
+
+    runs-on: ubuntu-latest
+    container:
+      image: gcc:15
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+
+      - name: Install clang-format
+        run: |
+          apt update
+          apt install -y clang-format
+
+      - name: Check formatting
+        run: |
+          clang-format \
+            --dry-run \
+            --Werror \
+            $(find . \
+              \( -name "*.cpp" \
+              -o -name "*.hpp" \
+              -o -name "*.h" \) \
+              -not -path "./build/*")
+
+
+
+  clang-tidy:
+
+    name: Static analysis
+
+
+    runs-on: ubuntu-latest
+    container:
+      image: gcc:15
+
+    steps:
+
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+
+
+      - name: Install tools
+        run: |
+          apt update
+          apt install -y \
+            cmake \
+            ninja-build \
+            clang-tidy
+
+
+
+      - name: Configure
+        run: |
+          cmake --preset debug \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+
+
+      - name: Build compile database
+        run: |
+          cmake --build --preset debug
+
+
+
+      - name: Run clang-tidy
+        run: |
+          clang-tidy \
+            $(find src tests \
+              \( -name "*.cpp" \)) \
+            -p build/debug
