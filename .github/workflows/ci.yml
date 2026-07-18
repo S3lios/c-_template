@@ -28,11 +28,23 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Install dependencies
-        uses: awalsh128/cache-apt-pkgs-action@v1.4.3
+      - name: Keep apt archives (disable docker-clean)
+        run: |
+          rm -f /etc/apt/apt.conf.d/docker-clean
+          echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+
+      - name: Cache apt packages
+        uses: actions/cache@v4
         with:
-          packages: cmake libgtest-dev
-          version: 1.0
+          path: /var/cache/apt/archives
+          key: apt-build-debug-${{ runner.os }}-v1
+          restore-keys: |
+            apt-build-debug-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: |
+          apt update
+          apt install -y --no-install-recommends cmake libgtest-dev
 
       - name: Setup ccache
         uses: hendrikmuhs/ccache-action@v1.2
@@ -60,11 +72,23 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Install dependencies
-        uses: awalsh128/cache-apt-pkgs-action@v1.4.3
+      - name: Keep apt archives (disable docker-clean)
+        run: |
+          rm -f /etc/apt/apt.conf.d/docker-clean
+          echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+
+      - name: Cache apt packages
+        uses: actions/cache@v4
         with:
-          packages: cmake libgtest-dev
-          version: 1.0
+          path: /var/cache/apt/archives
+          key: apt-tests-${{ runner.os }}-v1
+          restore-keys: |
+            apt-tests-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: |
+          apt update
+          apt install -y --no-install-recommends cmake libgtest-dev
 
       - name: Setup ccache
         uses: hendrikmuhs/ccache-action@v1.2
@@ -96,11 +120,24 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Install tools
-        uses: awalsh128/cache-apt-pkgs-action@v1.4.3
+      - name: Keep apt archives (disable docker-clean)
+        run: |
+          rm -f /etc/apt/apt.conf.d/docker-clean
+          echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+
+      - name: Cache apt packages
+        uses: actions/cache@v4
         with:
-          packages: cmake doxygen graphviz texlive-latex-extra texlive-pictures
-          version: 1.0
+          path: /var/cache/apt/archives
+          key: apt-docs-${{ runner.os }}-v1
+          restore-keys: |
+            apt-docs-${{ runner.os }}-
+
+      - name: Install tools
+        run: |
+          apt update
+          apt install -y --no-install-recommends \
+            cmake doxygen graphviz texlive-latex-extra texlive-pictures
 
       - name: Configure
         run: |
@@ -129,11 +166,24 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Install tools
-        uses: awalsh128/cache-apt-pkgs-action@v1.4.3
+      - name: Keep apt archives (disable docker-clean)
+        run: |
+          rm -f /etc/apt/apt.conf.d/docker-clean
+          echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+
+      - name: Cache apt packages
+        uses: actions/cache@v4
         with:
-          packages: cmake doxygen graphviz texlive-latex-extra texlive-pictures
-          version: 1.0
+          path: /var/cache/apt/archives
+          key: apt-release-${{ runner.os }}-v1
+          restore-keys: |
+            apt-release-${{ runner.os }}-
+
+      - name: Install tools
+        run: |
+          apt update
+          apt install -y --no-install-recommends \
+            cmake doxygen graphviz texlive-latex-extra texlive-pictures
 
       - name: Setup ccache
         uses: hendrikmuhs/ccache-action@v1.2
@@ -161,11 +211,23 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install dependencies
-        uses: awalsh128/cache-apt-pkgs-action@v1.4.3
+      - name: Keep apt archives (disable docker-clean)
+        run: |
+          rm -f /etc/apt/apt.conf.d/docker-clean
+          echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+
+      - name: Cache apt packages
+        uses: actions/cache@v4
         with:
-          packages: python3 pipx
-          version: 1.0
+          path: /var/cache/apt/archives
+          key: apt-commit-check-${{ runner.os }}-v1
+          restore-keys: |
+            apt-commit-check-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: |
+          apt update
+          apt install -y --no-install-recommends python3 pipx
 
       - name: Cache commitizen (pipx)
         uses: actions/cache@v4
@@ -206,11 +268,23 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Install clang-format
-        uses: awalsh128/cache-apt-pkgs-action@v1.4.3
+      - name: Keep apt archives (disable docker-clean)
+        run: |
+          rm -f /etc/apt/apt.conf.d/docker-clean
+          echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+
+      - name: Cache apt packages
+        uses: actions/cache@v4
         with:
-          packages: clang-format
-          version: 1.0
+          path: /var/cache/apt/archives
+          key: apt-clang-format-${{ runner.os }}-v1
+          restore-keys: |
+            apt-clang-format-${{ runner.os }}-
+
+      - name: Install clang-format
+        run: |
+          apt update
+          apt install -y --no-install-recommends clang-format
 
       - name: Check formatting
         run: |
@@ -236,11 +310,23 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Install tools
-        uses: awalsh128/cache-apt-pkgs-action@v1.4.3
+      - name: Keep apt archives (disable docker-clean)
+        run: |
+          rm -f /etc/apt/apt.conf.d/docker-clean
+          echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+
+      - name: Cache apt packages
+        uses: actions/cache@v4
         with:
-          packages: cmake clang-tidy libgtest-dev
-          version: 1.0
+          path: /var/cache/apt/archives
+          key: apt-clang-tidy-${{ runner.os }}-v1
+          restore-keys: |
+            apt-clang-tidy-${{ runner.os }}-
+
+      - name: Install tools
+        run: |
+          apt update
+          apt install -y --no-install-recommends cmake clang-tidy libgtest-dev
 
       - name: Setup ccache
         uses: hendrikmuhs/ccache-action@v1.2
