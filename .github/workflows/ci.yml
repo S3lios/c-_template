@@ -115,7 +115,7 @@ jobs:
             cmake \
             doxygen \
             graphviz \
-            texlive-latex-extra \ 
+            texlive-latex-extra \
             texlive-pictures
 
       - name: Configure
@@ -155,7 +155,7 @@ jobs:
             cmake \
             doxygen \
             graphviz \
-            texlive-latex-extra \ 
+            texlive-latex-extra \
             texlive-pictures
 
 
