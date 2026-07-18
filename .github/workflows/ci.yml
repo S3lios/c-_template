@@ -26,18 +26,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Install dependencies
-        run: |
-          apt update
-          apt install -y \
-            libgtest-dev \
-            cmake
+        uses: awalsh128/cache-apt-pkgs-action@v1.4.3
+        with:
+          packages: cmake libgtest-dev
+          version: 1.0
+
+      - name: Setup ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ github.job }}
 
       - name: Configure
         run: |
-          cmake --preset debug
+          cmake --preset debug -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 
       - name: Build
         run: |
@@ -54,18 +58,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Install dependencies
-        run: |
-          apt update
-          apt install -y \
-            cmake \
-            libgtest-dev
+        uses: awalsh128/cache-apt-pkgs-action@v1.4.3
+        with:
+          packages: cmake libgtest-dev
+          version: 1.0
+
+      - name: Setup ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ github.job }}
 
       - name: Configure
         run: |
-          cmake --preset test
+          cmake --preset test -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 
       - name: Build
         run: |
@@ -86,17 +94,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Install tools
-        run: |
-          apt update
-          apt install -y \
-            cmake \
-            doxygen \
-            graphviz \
-            texlive-latex-extra \
-            texlive-pictures
+        uses: awalsh128/cache-apt-pkgs-action@v1.4.3
+        with:
+          packages: cmake doxygen graphviz texlive-latex-extra texlive-pictures
+          version: 1.0
 
       - name: Configure
         run: |
@@ -123,21 +127,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Install tools
-        run: |
-          apt update
-          apt install -y \
-            cmake \
-            doxygen \
-            graphviz \
-            texlive-latex-extra \
-            texlive-pictures
+        uses: awalsh128/cache-apt-pkgs-action@v1.4.3
+        with:
+          packages: cmake doxygen graphviz texlive-latex-extra texlive-pictures
+          version: 1.0
+
+      - name: Setup ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ github.job }}
 
       - name: Configure
         run: |
-          cmake --preset release
+          cmake --preset release -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 
       - name: Build
         run: |
@@ -157,13 +162,20 @@ jobs:
           fetch-depth: 0
 
       - name: Install dependencies
+        uses: awalsh128/cache-apt-pkgs-action@v1.4.3
+        with:
+          packages: python3 pipx
+          version: 1.0
+
+      - name: Cache commitizen (pipx)
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/pipx
+          key: pipx-commitizen-${{ runner.os }}
+
+      - name: Install commitizen
         run: |
-          apt update
-          apt install -y \
-            cmake \
-            python3 \
-            pipx
-          pipx install commitizen
+          pipx install commitizen || true
 
       - name: Add pipx to PATH
         run: echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"
@@ -191,11 +203,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - name: Install clang-format
-        run: |
-          apt update
-          apt install -y clang-format
+        uses: awalsh128/cache-apt-pkgs-action@v1.4.3
+        with:
+          packages: clang-format
+          version: 1.0
 
       - name: Check formatting
         run: |
@@ -218,19 +233,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - name: Install tools
-        run: |
-          apt update
-          apt install -y \
-            cmake \
-            clang-tidy \
-            libgtest-dev
+        uses: awalsh128/cache-apt-pkgs-action@v1.4.3
+        with:
+          packages: cmake clang-tidy libgtest-dev
+          version: 1.0
+
+      - name: Setup ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ github.job }}
 
       - name: Configure
         run: |
           cmake --preset debug \
-            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 
       - name: Build compile database
         run: |
