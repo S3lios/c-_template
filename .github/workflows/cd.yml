@@ -1,7 +1,6 @@
 name: CD
 
 on:
-
   push:
     tags:
       - "v*"
@@ -10,83 +9,46 @@ permissions:
   contents: write
 
 jobs:
-
-
   release:
-
-
     name: Create release
 
     runs-on: ubuntu-latest
     container:
       image: gcc:15
 
-
     steps:
-
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-
 
       - name: Install dependencies
         run: |
           apt update
           apt install -y \
             cmake \
-            ninja-build \
-            doxygen \
-            graphviz \
-            texlive-latex-extra
-
-
+            ninja-build
 
       - name: Configure release
         run: |
           cmake --preset release
 
-
-
       - name: Build release
         run: |
           cmake --build --preset release
-
-
-
-      - name: Configure docs
-        run: |
-          cmake --preset docs
-
-
-
-      - name: Generate docs
-        run: |
-          cmake --build --preset docs --target doc
-
-
 
       - name: Package
         run: |
           cmake --install build/release \
             --prefix package
 
-
-
       - name: Archive package
         run: |
           tar czf XXX-${GITHUB_REF_NAME}.tar.gz package
 
-
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-
           files: |
             XXX-${GITHUB_REF_NAME}.tar.gz
-            build/docs/**
-
           generate_release_notes: true
