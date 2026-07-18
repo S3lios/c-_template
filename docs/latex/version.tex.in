@@ -1,0 +1,1 @@
+\newcommand{\ProjectVersion}{@PROJECT_GIT_TAG@ (@PROJECT_GIT_HASH@)}

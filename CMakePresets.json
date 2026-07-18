@@ -1,0 +1,208 @@
+{
+    "version": 6,
+    "configurePresets": [
+        {
+            "name": "debug",
+            "generator": "Unix Makefiles",
+            "binaryDir": "build/debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "BUILD_TESTING": "OFF",
+                "BUILD_EXAMPLES": "OFF",
+                "BUILD_DOCS": "OFF"
+            }
+        },
+        {
+            "name": "test",
+            "generator": "Unix Makefiles",
+            "binaryDir": "build/test",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "BUILD_TESTING": "ON",
+                "BUILD_EXAMPLES": "OFF",
+                "BUILD_DOCS": "OFF"
+            }
+        },
+        {
+            "name": "release",
+            "generator": "Unix Makefiles",
+            "binaryDir": "build/release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "BUILD_TESTING": "OFF",
+                "BUILD_EXAMPLES": "OFF",
+                "BUILD_DOCS": "ON"
+            }
+        },
+        {
+            "name": "docs",
+            "generator": "Unix Makefiles",
+            "binaryDir": "build/docs",
+            "cacheVariables": {
+                "BUILD_DOCS": "ON",
+                "CMAKE_BUILD_TYPE": "Release",
+                "BUILD_TESTING": "OFF"
+            }
+        },
+        {
+            "name": "quality",
+            "inherits": "test",
+            "binaryDir": "build/quality",
+
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "ENABLE_CLANG_TIDY": "ON",
+                "ENABLE_CLANG_FORMAT": "ON",
+                "ENABLE_CHECK_DOC": "ON",
+                "BUILD_TESTING": "ON",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+            }
+        }
+    ],
+    "buildPresets": [
+    {
+      "name": "debug",
+      "configurePreset": "debug"
+    },
+
+    {
+      "name": "test",
+      "configurePreset": "test"
+    },
+
+    {
+      "name": "release",
+      "configurePreset": "release"
+    },
+
+    {
+      "name": "docs",
+      "configurePreset": "docs",
+          "targets": [
+            "doc"
+        ]
+    },
+
+    {
+        "name": "quality",
+        "configurePreset": "quality",
+        "targets": [
+            "check-doc",
+            "check-format",
+            "check-tidy"
+        ]
+    },
+
+    {
+        "name": "format",
+        "configurePreset": "quality",
+        "targets": [
+            "apply-format"
+        ]
+    }
+
+  ],
+  "testPresets": [
+    {
+      "name": "test",
+      "configurePreset": "test",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ],
+  "workflowPresets": [
+        {
+            "name": "debug",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "debug"
+                },
+                {
+                    "type": "build",
+                    "name": "debug"
+                }
+            ]
+        },
+
+        {
+            "name": "test",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "test"
+                },
+                {
+                    "type": "build",
+                    "name": "test"
+                },
+                {
+                    "type": "test",
+                    "name": "test"
+                }
+            ]
+        },
+
+        {
+            "name": "release",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "release"
+                },
+                {
+                    "type": "build",
+                    "name": "release"
+                }
+            ]
+        },
+        {
+            "name": "docs",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "docs"
+                },
+                {
+                    "type": "build",
+                    "name": "docs"
+                }
+            ]
+        },
+
+        {
+            "name": "quality",
+
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "quality"
+                },
+
+                {
+                    "type": "build",
+                    "name": "quality"
+                }
+            ]
+        },
+
+        {
+            "name": "format",
+
+            "steps": [
+
+                {
+                    "type": "configure",
+                    "name": "quality"
+                },
+
+                {
+                    "type": "build",
+                    "name": "format"
+                }
+
+            ]
+        }
+    ]
+}

@@ -1,0 +1,5 @@
+#pragma once
+
+#define VERSION_TAG "@PROJECT_GIT_TAG@"
+#define VERSION_HASH "@PROJECT_GIT_HASH@"
+#define VERSION "@PROJECT_VERSION@"

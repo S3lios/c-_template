@@ -1,0 +1,9 @@
+{
+    "editor.formatOnSave": false,
+    "editor.detectIndentation": false,
+    "editor.defaultFormatter": "xaver.clang-format",
+    "editor.formatOnPaste": false,
+    "files.exclude": {
+        "**/build": true
+    }
+}
