@@ -168,11 +168,7 @@ jobs:
         run: |
           cmake --build --preset release
 
-
-          commit-check:
-
-
-  commit-conv:
+  commit-check:
     name: Commit convention
 
     runs-on: ubuntu-latest
@@ -193,7 +189,7 @@ jobs:
             cmake \
             python3 \
             pipx \
-          pipx install commitizen
+          pipx install commitizen \
           echo "$HOME/.local/bin" >> $GITHUB_PATH
     
       - name: Check commits
@@ -207,7 +203,7 @@ jobs:
 
   clang-format:
 
-    name: clang-format check
+    name: Code format check
 
     runs-on: ubuntu-latest
     container:
