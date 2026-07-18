@@ -171,13 +171,13 @@ jobs:
 
           commit-check:
 
-    name: Commit convention
 
+  commit-conv:
+    name: Commit convention
 
     runs-on: ubuntu-latest
     container:
       image: gcc:15
-
 
     steps:
 
@@ -203,7 +203,6 @@ jobs:
           else
             cz check --rev-range "${{ github.event.before }}..${{ github.sha }}"
           fi
-
 
 
   clang-format:
