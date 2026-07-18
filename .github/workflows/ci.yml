@@ -24,7 +24,7 @@ jobs:
 
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/<user>/cpp-template-ci:latest
+      image: gcc:15
 
     steps:
 
@@ -58,7 +58,7 @@ jobs:
 
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/<user>/cpp-template-ci:latest
+      image: gcc:15
 
     steps:
 
@@ -98,7 +98,7 @@ jobs:
 
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/<user>/cpp-template-ci:latest
+      image: gcc:15
 
     steps:
 
@@ -137,7 +137,7 @@ jobs:
 
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/<user>/cpp-template-ci:latest
+      image: gcc:15
 
     steps:
 
