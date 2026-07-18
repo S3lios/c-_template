@@ -191,8 +191,8 @@ jobs:
             pipx
           pipx install commitizen
 
-    - name: Add pipx to PATH
-      run: echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"
+      - name: Add pipx to PATH
+        run: echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"
 
       - name: Check commits
         run: |
