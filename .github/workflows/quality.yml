@@ -67,8 +67,8 @@ jobs:
 
       - name: Install clang-format
         run: |
-          sudo apt update
-          sudo apt install -y clang-format
+          apt update
+          apt install -y clang-format
 
 
       - name: Check formatting
@@ -103,8 +103,8 @@ jobs:
 
       - name: Install tools
         run: |
-          sudo apt update
-          sudo apt install -y \
+          apt update
+          apt install -y \
             cmake \
             ninja-build \
             clang-tidy

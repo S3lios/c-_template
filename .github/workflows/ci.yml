@@ -36,8 +36,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt update
-          sudo apt install -y \
+          apt update
+          apt install -y \
             cmake
 
 
@@ -70,8 +70,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt update
-          sudo apt install -y \
+          apt update
+          apt install -y \
             cmake \
             libgtest-dev
 
@@ -110,8 +110,8 @@ jobs:
 
       - name: Install tools
         run: |
-          sudo apt update
-          sudo apt install -y \
+          apt update
+          apt install -y \
             cmake \
             doxygen \
             graphviz \
@@ -149,8 +149,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt update
-          sudo apt install -y \
+          apt update
+          apt install -y \
             cmake \
 
 
