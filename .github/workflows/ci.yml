@@ -188,10 +188,12 @@ jobs:
           apt install -y \
             cmake \
             python3 \
-            pipx \
-          pipx install commitizen \
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-    
+            pipx
+          pipx install commitizen
+
+    - name: Add pipx to PATH
+      run: echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"
+
       - name: Check commits
         run: |
           if [[ "${{ github.event.before }}" == "0000000000000000000000000000000000000000" ]]; then
