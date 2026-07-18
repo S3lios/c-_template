@@ -18,6 +18,8 @@ jobs:
     name: Create release
 
     runs-on: ubuntu-latest
+    container:
+      image: gcc:15
 
 
     steps:
