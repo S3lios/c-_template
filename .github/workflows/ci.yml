@@ -115,7 +115,8 @@ jobs:
             cmake \
             doxygen \
             graphviz \
-            texlive-latex-extra
+            texlive-latex-extra \ 
+            texlive-pictures
 
       - name: Configure
         run: |
@@ -147,11 +148,15 @@ jobs:
           fetch-depth: 0
 
 
-      - name: Install dependencies
+      - name: Install tools
         run: |
           apt update
           apt install -y \
             cmake \
+            doxygen \
+            graphviz \
+            texlive-latex-extra \ 
+            texlive-pictures
 
 
       - name: Configure

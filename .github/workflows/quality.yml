@@ -13,8 +13,6 @@ on:
       - master
       - develop
 
-
-
 jobs:
 
 
@@ -35,6 +33,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install dependencies
+        run: |
+          apt update
+          apt install -y \
+            cmake \
+          python3 \
+          python3-pip \
 
       - name: Install Commitizen
         run: |
