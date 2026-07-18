@@ -194,7 +194,13 @@ jobs:
       - name: Add pipx to PATH
         run: echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"
 
+
+      - name: Configure git
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
       - name: Check commits
+        shell: bash
         run: |
           if [[ "${{ github.event.before }}" == "0000000000000000000000000000000000000000" ]]; then
             cz check --rev-range "${{ github.sha }}"
