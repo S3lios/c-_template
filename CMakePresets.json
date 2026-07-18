@@ -7,7 +7,7 @@
             "binaryDir": "build/debug",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "BUILD_TESTING": "OFF",
+                "BUILD_TESTING": "ON",
                 "BUILD_EXAMPLES": "OFF",
                 "BUILD_DOCS": "OFF"
             }
@@ -31,7 +31,8 @@
                 "CMAKE_BUILD_TYPE": "Release",
                 "BUILD_TESTING": "OFF",
                 "BUILD_EXAMPLES": "OFF",
-                "BUILD_DOCS": "ON"
+                "BUILD_DOCS": "OFF",
+                "CMAKE_INSTALL_PREFIX": "$env{INSTALL_DIR}"
             }
         },
         {
@@ -73,6 +74,12 @@
     {
       "name": "release",
       "configurePreset": "release"
+    },
+
+    {
+      "name": "install",
+      "configurePreset": "release",
+      "targets": ["install"]
     },
 
     {
@@ -154,6 +161,19 @@
                 {
                     "type": "build",
                     "name": "release"
+                }
+            ]
+        },
+        {
+            "name": "install",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "release"
+                },
+                {
+                    "type": "build",
+                    "name": "install"
                 }
             ]
         },

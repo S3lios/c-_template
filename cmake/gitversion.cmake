@@ -79,8 +79,3 @@ else()
     endif()
 
 endif()
-
-
-# Export vers le scope parent uniquement si nécessaire
-set(PROJECT_GIT_TAG "${PROJECT_GIT_TAG}" PARENT_SCOPE)
-set(PROJECT_GIT_HASH "${PROJECT_GIT_HASH}" PARENT_SCOPE)

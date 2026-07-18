@@ -11,111 +11,133 @@ on:
       - master
       - develop
 
-
 env:
   BUILD_PRESET: ci
 
-
 jobs:
-
   build-debug:
-
     name: Debug build
 
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/<user>/cpp-template-ci:latest
+      image: gcc:15
 
     steps:
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
+      - name: Keep apt archives (disable docker-clean)
+        run: |
+          rm -f /etc/apt/apt.conf.d/docker-clean
+          echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+
+      - name: Cache apt packages
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/apt/archives
+          key: apt-build-debug-${{ runner.os }}-v1
+          restore-keys: |
+            apt-build-debug-${{ runner.os }}-
 
       - name: Install dependencies
         run: |
           apt update
-          apt install -y \
-            cmake
+          apt install -y --no-install-recommends cmake libgtest-dev
 
+      - name: Setup ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ github.job }}
 
       - name: Configure
         run: |
-          cmake --preset debug
-
+          cmake --preset debug -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 
       - name: Build
         run: |
           cmake --build --preset debug
 
-
-
   tests:
-
     name: Tests
 
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/<user>/cpp-template-ci:latest
+      image: gcc:15
 
     steps:
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
+      - name: Keep apt archives (disable docker-clean)
+        run: |
+          rm -f /etc/apt/apt.conf.d/docker-clean
+          echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+
+      - name: Cache apt packages
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/apt/archives
+          key: apt-tests-${{ runner.os }}-v1
+          restore-keys: |
+            apt-tests-${{ runner.os }}-
 
       - name: Install dependencies
         run: |
           apt update
-          apt install -y \
-            cmake \
-            libgtest-dev
+          apt install -y --no-install-recommends cmake libgtest-dev
 
+      - name: Setup ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ github.job }}
 
       - name: Configure
         run: |
-          cmake --preset test
-
+          cmake --preset test -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 
       - name: Build
         run: |
           cmake --build --preset test
 
-
       - name: Run tests
         run: |
           ctest --preset test
 
-
-
   documentation:
-
     name: Documentation
 
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/<user>/cpp-template-ci:latest
+      image: gcc:15
 
     steps:
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
+      - name: Keep apt archives (disable docker-clean)
+        run: |
+          rm -f /etc/apt/apt.conf.d/docker-clean
+          echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+
+      - name: Cache apt packages
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/apt/archives
+          key: apt-docs-${{ runner.os }}-v1
+          restore-keys: |
+            apt-docs-${{ runner.os }}-
 
       - name: Install tools
         run: |
           apt update
-          apt install -y \
-            cmake \
-            doxygen \
-            graphviz \
-            texlive-latex-extra
+          apt install -y --no-install-recommends \
+            cmake doxygen graphviz texlive-latex-extra texlive-pictures
 
       - name: Configure
         run: |
@@ -132,33 +154,198 @@ jobs:
           path: build/docs
 
   release-build:
-
     name: Release build
 
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/<user>/cpp-template-ci:latest
+      image: gcc:15
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
+      - name: Keep apt archives (disable docker-clean)
+        run: |
+          rm -f /etc/apt/apt.conf.d/docker-clean
+          echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+
+      - name: Cache apt packages
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/apt/archives
+          key: apt-release-${{ runner.os }}-v1
+          restore-keys: |
+            apt-release-${{ runner.os }}-
+
+      - name: Install tools
+        run: |
+          apt update
+          apt install -y --no-install-recommends \
+            cmake doxygen graphviz texlive-latex-extra texlive-pictures
+
+      - name: Setup ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ github.job }}
+
+      - name: Configure
+        run: |
+          cmake --preset release -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+
+      - name: Build
+        run: |
+          cmake --build --preset release
+
+  commit-check:
+    name: Commit convention
+
+    runs-on: ubuntu-latest
+    container:
+      image: gcc:15
+
+    steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      - name: Keep apt archives (disable docker-clean)
+        run: |
+          rm -f /etc/apt/apt.conf.d/docker-clean
+          echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+
+      - name: Cache apt packages
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/apt/archives
+          key: apt-commit-check-${{ runner.os }}-v1
+          restore-keys: |
+            apt-commit-check-${{ runner.os }}-
 
       - name: Install dependencies
         run: |
           apt update
-          apt install -y \
-            cmake \
+          apt install -y --no-install-recommends python3 pipx
 
+      - name: Cache commitizen (pipx)
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/pipx
+          key: pipx-commitizen-${{ runner.os }}
+
+      - name: Install commitizen
+        run: |
+          pipx install commitizen || true
+
+      - name: Add pipx to PATH
+        run: echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"
+
+      - name: Configure git
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Check commits
+        shell: bash
+        run: |
+          if [[ "${{ github.event.before }}" == "0000000000000000000000000000000000000000" ]]; then
+            cz check --rev-range "${{ github.sha }}"
+          else
+            cz check --rev-range "${{ github.event.before }}..${{ github.sha }}"
+          fi
+
+  clang-format:
+    name: Code format check
+
+    runs-on: ubuntu-latest
+    container:
+      image: gcc:15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Keep apt archives (disable docker-clean)
+        run: |
+          rm -f /etc/apt/apt.conf.d/docker-clean
+          echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+
+      - name: Cache apt packages
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/apt/archives
+          key: apt-clang-format-${{ runner.os }}-v1
+          restore-keys: |
+            apt-clang-format-${{ runner.os }}-
+
+      - name: Install clang-format
+        run: |
+          apt update
+          apt install -y --no-install-recommends clang-format
+
+      - name: Check formatting
+        run: |
+          clang-format \
+            --dry-run \
+            --Werror \
+            $(find . \
+              \( -name "*.cpp" \
+              -o -name "*.hpp" \
+              -o -name "*.h" \) \
+              -not -path "./build/*")
+
+  clang-tidy:
+    name: Static analysis
+
+    runs-on: ubuntu-latest
+    container:
+      image: gcc:15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Keep apt archives (disable docker-clean)
+        run: |
+          rm -f /etc/apt/apt.conf.d/docker-clean
+          echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+
+      - name: Cache apt packages
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/apt/archives
+          key: apt-clang-tidy-${{ runner.os }}-v1
+          restore-keys: |
+            apt-clang-tidy-${{ runner.os }}-
+
+      - name: Install tools
+        run: |
+          apt update
+          apt install -y --no-install-recommends cmake clang-tidy libgtest-dev
+
+      - name: Setup ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ github.job }}
 
       - name: Configure
         run: |
-          cmake --preset release
+          cmake --preset debug \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 
-
-      - name: Build
+      - name: Build compile database
         run: |
-          cmake --build --preset release
+          cmake --build --preset debug
+
+      - name: Run clang-tidy
+        run: |
+          clang-tidy \
+            $(find src tests \
+              \( -name "*.cpp" \)) \
+            -p build/debug

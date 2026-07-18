@@ -17,3 +17,7 @@ target_link_libraries(XXX
     PRIVATE
         math
 )
+
+install(TARGETS XXX
+    RUNTIME DESTINATION bin
+)
