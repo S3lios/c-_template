@@ -1,4 +1,4 @@
-# XXX
+# Template name
 
 ![CI](https://github.com/S3lios/c-_template/actions/workflows/ci.yml/badge.svg)
 ![CD](https://github.com/S3lios/c-_template/actions/workflows/cd.yml/badge.svg)
