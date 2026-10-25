@@ -1,0 +1,48 @@
+name: Create Release Tag
+
+on: pull_request: types: - closed branches: - main
+
+permissions: contents: write
+
+jobs: create-tag: if: github.event.pull_request.merged == true runs-on: ubuntu-latest
+
+steps:
+  - name: Extract version
+    id: version
+    env:
+      PR_TITLE: ${{ github.event.pull_request.title }}
+    run: |
+      set -euo pipefail
+
+      if [[ ! "$PR_TITLE" =~ ^release:\ v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+        echo "::error::Invalid release version in PR title."
+        exit 1
+      fi
+
+      TAG="v${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.${BASH_REMATCH[3]}"
+      echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+  - name: Checkout merged commit
+    uses: actions/checkout@v4
+    with:
+      ref: ${{ github.event.pull_request.merge_commit_sha }}
+      fetch-depth: 0
+
+  - name: Create and push tag
+    env:
+      TAG: ${{ steps.version.outputs.tag }}
+    run: |
+      set -euo pipefail
+
+      if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+        echo "::error::Tag $TAG already exists."
+        exit 1
+      fi
+
+      git config user.name "github-actions[bot]"
+      git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      git tag -a "$TAG" -m "Release $TAG"
+      git push origin "$TAG"
+
+      echo "Successfully created tag $TAG"
